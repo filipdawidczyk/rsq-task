@@ -13,9 +13,15 @@ internal class TenantInterceptor : HandlerInterceptor {
 
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
         val tenantId = request.getHeader(TENANT_ID_HEADER_KEY)
+
+        if (swaggerEndpointsIgnorer(request)) {
+            return true
+        }
+
         if (tenantId.isNullOrEmpty()) {
             throw MissingHeaderException("x-tenant-id header is missing")
         }
+
         TenantContext.setCurrentTenant(tenantId)
         return true
     }
@@ -28,5 +34,11 @@ internal class TenantInterceptor : HandlerInterceptor {
     ) {
         TenantContext.clear()
     }
+
+    /**
+     * Ad hoc workaround to allow using swagger with required x-tenant-id header
+     */
+    private fun swaggerEndpointsIgnorer(request: HttpServletRequest) =
+        request.requestURL.contains("swagger-ui") || request.requestURL.contains("api-docs")
 
 }

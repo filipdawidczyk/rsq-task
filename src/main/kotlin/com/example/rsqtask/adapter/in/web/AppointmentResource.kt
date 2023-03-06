@@ -36,4 +36,9 @@ internal class AppointmentResource(
     fun remove(@PathVariable("uuid") uuid: String) {
         removeAppointmentUseCase.remove(uuid)
     }
+
+    @PutMapping("/{uuid}")
+    fun hwdp(@PathVariable("uuid") uuid: String) {
+        removeAppointmentUseCase.remove(uuid)
+    }
 }
